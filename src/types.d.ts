@@ -3,5 +3,10 @@ export interface Msg {
   message: string;
   author: string;
   datetime: string;
+}
 
+export interface MsgMutation {
+  message: string;
+  author: string;
+  datetime: string;
 }
