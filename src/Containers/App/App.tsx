@@ -3,7 +3,7 @@ import Message from "../../Components/Message/Message";
 import ChatForm from "../../Components/ChatForm/ChatForm";
 import {Msg} from "../../types";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {clearInterval} from "timers";
+
 
 const url = ' http://146.185.154.90:8000/messages';
 
@@ -11,11 +11,10 @@ function App() {
   const [messages, setMessages] = useState<Msg[]>([
   ]);
 
-  const [newMsg, setNewMsg] = useState<Msg[]>([])
 
 
   const sendMessage = async (msg: Msg) =>{
-    setNewMsg(prev => [...prev, msg]);
+    setMessages(prev => [...prev, msg]);
     console.log(msg);
     try{
       const body = new URLSearchParams();
@@ -58,7 +57,6 @@ function App() {
               author: message.author,
               datetime: message.datetime,
             }))
-            // setMessages(newMessages)
           }
         }, 2000)
       }
@@ -68,7 +66,7 @@ function App() {
 
 
   return (
-    <div className="App" style={{margin: '20px'}}>
+    <div className="App" style={{padding: '20px', background: '#aeeeae'}}>
       <ChatForm
       onSubmit={sendMessage}
       />
