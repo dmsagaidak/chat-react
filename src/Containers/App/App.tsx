@@ -8,12 +8,14 @@ const url = ' http://146.185.154.90:8000/messages';
 
 function App() {
   const [messages, setMessages] = useState<Msg[]>([
-
   ]);
 
+  const [newMsg, setNewMsg] = useState<Msg[]>([])
 
-  const sendMessage = async () =>{
 
+  const sendMessage = async (msg: Msg) =>{
+    setNewMsg(prev => [...prev, msg]);
+    console.log(msg);
   }
 
   useEffect( () => {
@@ -58,7 +60,9 @@ function App() {
 
   return (
     <div className="App" style={{margin: '20px'}}>
-      <ChatForm/>
+      <ChatForm
+      onSubmit={sendMessage}
+      />
       <>
         {messages.map((message) =>(
           <Message
