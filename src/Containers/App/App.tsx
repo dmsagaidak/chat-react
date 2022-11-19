@@ -9,7 +9,8 @@ const url = ' http://146.185.154.90:8000/messages';
 function App() {
   const [messages, setMessages] = useState<Msg[]>([
 
-  ])
+  ]);
+
 
   const sendMessage = async () =>{
 
@@ -21,7 +22,9 @@ function App() {
 
       if (response.ok){
         const messages: Msg[] = await response.json();
-        const newMessages = messages.map(message =>({
+        const date = messages[messages.length - 1].datetime;
+        let dateUrl = `${url}?datetime=${date}`
+        let newMessages = messages.map(message =>({
           ...message,
           _id: message._id,
           message: message.message,
@@ -29,10 +32,29 @@ function App() {
           datetime: message.datetime,
         }))
         setMessages(newMessages);
+
+        setInterval(async () =>{
+          const response = await fetch(dateUrl);
+          const newMsgData: Msg[] = await response.json();
+
+          if(newMsgData.length){
+            const lastDate = newMsgData[newMsgData.length - 1].datetime;
+            dateUrl = `${url}?datetime=${lastDate}`;
+            newMessages= newMsgData.map(message =>({
+              ...message,
+              _id: message._id,
+              message: message.message,
+              author: message.author,
+              datetime: message.datetime,
+            }))
+            // setMessages(newMessages)
+          }
+        }, 2000)
       }
     };
     fetchData().catch(console.error);
   }, [])
+
 
   return (
     <div className="App" style={{margin: '20px'}}>
