@@ -11,11 +11,11 @@ function App() {
   const [messages, setMessages] = useState<Msg[]>([
   ]);
 
+  const [lastmsg, setLastmsg] = useState<Msg[]>([])
 
 
   const sendMessage = async (msg: Msg) =>{
     setMessages(prev => [...prev, msg]);
-    console.log(msg);
     try{
       const body = new URLSearchParams();
       body.append('author', msg.author);
@@ -26,6 +26,16 @@ function App() {
     }
   }
 
+  const getMessages = (arr: Msg[]) => {
+      arr.map(message => ({
+        ...message,
+        _id: message._id,
+        message: message.message,
+        author: message.author,
+        datetime: message.datetime,
+      }))
+  }
+
   useEffect( () => {
     const fetchData = async () =>{
       const response = await fetch(url);
@@ -33,31 +43,23 @@ function App() {
       if (response.ok){
         const messages: Msg[] = await response.json();
         const date = messages[messages.length - 1].datetime;
-        let dateUrl = `${url}?datetime=${date}`
-        let newMessages = messages.map(message =>({
-          ...message,
-          _id: message._id,
-          message: message.message,
-          author: message.author,
-          datetime: message.datetime,
-        }))
-        setMessages(newMessages);
+        let dateUrl = `${url}?datetime=${date}`;
+
+        getMessages(messages);
+        setMessages(messages);
 
         setInterval(async () =>{
           const response = await fetch(dateUrl);
           const newMsgData: Msg[] = await response.json();
+          console.log(newMsgData);
 
           if(newMsgData.length){
             const lastDate = newMsgData[newMsgData.length - 1].datetime;
             dateUrl = `${url}?datetime=${lastDate}`;
-            newMessages= newMsgData.map(message =>({
-              ...message,
-              _id: message._id,
-              message: message.message,
-              author: message.author,
-              datetime: message.datetime,
-            }))
+            getMessages(newMsgData);
+            setMessages(newMsgData);
           }
+
         }, 2000)
       }
     };
