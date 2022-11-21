@@ -11,8 +11,6 @@ function App() {
   const [messages, setMessages] = useState<Msg[]>([
   ]);
 
-  const [lastmsg, setLastmsg] = useState<Msg[]>([])
-
 
   const sendMessage = async (msg: Msg) =>{
     setMessages(prev => [...prev, msg]);
@@ -51,13 +49,12 @@ function App() {
         setInterval(async () =>{
           const response = await fetch(dateUrl);
           const newMsgData: Msg[] = await response.json();
-          console.log(newMsgData);
 
           if(newMsgData.length){
             const lastDate = newMsgData[newMsgData.length - 1].datetime;
             dateUrl = `${url}?datetime=${lastDate}`;
             getMessages(newMsgData);
-            setMessages(newMsgData);
+            setMessages(prev => [...prev, newMsgData[0]]);
           }
 
         }, 2000)
